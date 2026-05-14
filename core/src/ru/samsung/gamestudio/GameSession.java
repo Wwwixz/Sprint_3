@@ -3,6 +3,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import ru.samsung.gamestudio.managers.MemoryManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class GameSession {
