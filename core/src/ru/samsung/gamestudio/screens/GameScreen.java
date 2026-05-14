@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.components.*;
 import ru.samsung.gamestudio.managers.ContactManager;
@@ -34,6 +35,8 @@ public class GameScreen extends ScreenAdapter {
     LiveView liveView;
     TextView scoreTextView;
     ButtonView pauseButton;
+    TextView maxHealthTextView;
+    long maxHealthMessageTimer;
 
     // PAUSED state UI
     ImageView fullBlackoutView;
@@ -72,6 +75,9 @@ public class GameScreen extends ScreenAdapter {
                 46, 54,
                 GameResources.PAUSE_IMG_PATH
         );
+
+        maxHealthTextView = new TextView(myGdxGame.commonWhiteFont, 0, 640, "Здоровье на максимум");
+        maxHealthTextView.setX((GameSettings.SCREEN_WIDTH - maxHealthTextView.getWidth()) / 2);
 
         fullBlackoutView = new ImageView(0, 0, GameResources.BLACKOUT_FULL_IMG_PATH);
         pauseTextView = new TextView(myGdxGame.largeWhiteFont, 282, 842, "Pause");
@@ -212,6 +218,10 @@ public class GameScreen extends ScreenAdapter {
         liveView.draw(myGdxGame.batch);
         pauseButton.draw(myGdxGame.batch);
 
+        if (TimeUtils.millis() - maxHealthMessageTimer < 2000) {
+            maxHealthTextView.draw(myGdxGame.batch);
+        }
+
         if (gameSession.state == GameState.PAUSED) {
             fullBlackoutView.draw(myGdxGame.batch);
             pauseTextView.draw(myGdxGame.batch);
@@ -259,8 +269,11 @@ public class GameScreen extends ScreenAdapter {
             boolean hasToBeDestroyed = bonusArray.get(i).isTaken() || !bonusArray.get(i).isInFrame();
 
             if (bonusArray.get(i).isTaken()) {
-                shipObject.addLife();
-                // We don't have a specific sound for bonus, but we could use something else or just silence
+                if (shipObject.getLiveLeft() < GameSettings.MAX_LIVES) {
+                    shipObject.addLife();
+                } else {
+                    maxHealthMessageTimer = TimeUtils.millis();
+                }
             }
 
             if (hasToBeDestroyed) {

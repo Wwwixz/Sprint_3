@@ -15,7 +15,7 @@ public class ShipObject extends GameObject {
     public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
         super(texturePath, x, y, width, height, GameSettings.SHIP_BIT, world);
         body.setLinearDamping(10);
-        livesLeft = 3;
+        livesLeft = GameSettings.MAX_LIVES;
     }
 
 
@@ -66,7 +66,9 @@ public class ShipObject extends GameObject {
     }
 
     public void addLife() {
-        livesLeft += 1;
+        if (livesLeft < GameSettings.MAX_LIVES) {
+            livesLeft += 1;
+        }
     }
 
     public boolean isAlive() {
