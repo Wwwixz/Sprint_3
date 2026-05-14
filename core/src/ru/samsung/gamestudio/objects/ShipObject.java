@@ -65,6 +65,10 @@ public class ShipObject extends GameObject {
         livesLeft -= 1;
     }
 
+    public void addLife() {
+        livesLeft += 1;
+    }
+
     public boolean isAlive() {
         return livesLeft > 0;
     }

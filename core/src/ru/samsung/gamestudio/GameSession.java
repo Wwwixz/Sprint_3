@@ -9,6 +9,7 @@ public class GameSession {
 
     public GameState state;
     long nextTrashSpawnTime;
+    long nextBonusSpawnTime;
     long sessionStartTime;
     long pauseStartTime;
     private int score;
@@ -24,6 +25,7 @@ public class GameSession {
         sessionStartTime = TimeUtils.millis();
         nextTrashSpawnTime = sessionStartTime + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN
                 * getTrashPeriodCoolDown());
+        nextBonusSpawnTime = sessionStartTime + 5000 + (new Random()).nextInt(10000);
     }
 
     public void pauseGame() {
@@ -34,6 +36,7 @@ public class GameSession {
     public void resumeGame() {
         state = GameState.PLAYING;
         sessionStartTime += TimeUtils.millis() - pauseStartTime;
+        nextBonusSpawnTime += TimeUtils.millis() - pauseStartTime;
     }
 
     public void endGame() {
@@ -67,6 +70,14 @@ public class GameSession {
         if (nextTrashSpawnTime <= TimeUtils.millis()) {
             nextTrashSpawnTime = TimeUtils.millis() + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN
                     * getTrashPeriodCoolDown());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean shouldSpawnBonus() {
+        if (nextBonusSpawnTime <= TimeUtils.millis()) {
+            nextBonusSpawnTime = TimeUtils.millis() + 10000 + (new Random()).nextInt(15000);
             return true;
         }
         return false;

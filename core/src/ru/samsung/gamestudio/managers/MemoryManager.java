@@ -38,7 +38,7 @@ public class MemoryManager {
 
     public static ArrayList<Integer> loadRecordsTable() {
         if (!preferences.contains("recordTable"))
-            return null;
+            return new ArrayList<>();
 
         String scores = preferences.getString("recordTable");
         Json json = new Json();

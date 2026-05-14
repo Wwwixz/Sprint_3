@@ -9,6 +9,7 @@ import ru.samsung.gamestudio.*;
 import ru.samsung.gamestudio.components.*;
 import ru.samsung.gamestudio.managers.ContactManager;
 import ru.samsung.gamestudio.managers.MemoryManager;
+import ru.samsung.gamestudio.objects.BonusObject;
 import ru.samsung.gamestudio.objects.BulletObject;
 import ru.samsung.gamestudio.objects.ShipObject;
 import ru.samsung.gamestudio.objects.TrashObject;
@@ -23,6 +24,7 @@ public class GameScreen extends ScreenAdapter {
 
     ArrayList<TrashObject> trashArray;
     ArrayList<BulletObject> bulletArray;
+    ArrayList<BonusObject> bonusArray;
 
     ContactManager contactManager;
 
@@ -52,6 +54,7 @@ public class GameScreen extends ScreenAdapter {
 
         trashArray = new ArrayList<>();
         bulletArray = new ArrayList<>();
+        bonusArray = new ArrayList<>();
 
         shipObject = new ShipObject(
                 GameSettings.SCREEN_WIDTH / 2, 150,
@@ -119,6 +122,15 @@ public class GameScreen extends ScreenAdapter {
                 trashArray.add(trashObject);
             }
 
+            if (gameSession.shouldSpawnBonus()) {
+                BonusObject bonusObject = new BonusObject(
+                        GameSettings.BONUS_WIDTH, GameSettings.BONUS_HEIGHT,
+                        GameResources.LIVE_IMG_PATH,
+                        myGdxGame.world
+                );
+                bonusArray.add(bonusObject);
+            }
+
             if (shipObject.needToShoot()) {
                 BulletObject laserBullet = new BulletObject(
                         shipObject.getX(), shipObject.getY() + shipObject.height / 2,
@@ -137,6 +149,7 @@ public class GameScreen extends ScreenAdapter {
 
             updateTrash();
             updateBullets();
+            updateBonuses();
             backgroundView.move();
             gameSession.updateScore();
             scoreTextView.setText("Score: " + gameSession.getScore());
@@ -189,6 +202,7 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.batch.begin();
         backgroundView.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
+        for (BonusObject bonus : bonusArray) bonus.draw(myGdxGame.batch);
         shipObject.draw(myGdxGame.batch);
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         topBlackoutView.draw(myGdxGame.batch);
@@ -238,11 +252,32 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    private void updateBonuses() {
+        for (int i = 0; i < bonusArray.size(); i++) {
+            boolean hasToBeDestroyed = bonusArray.get(i).isTaken() || !bonusArray.get(i).isInFrame();
+
+            if (bonusArray.get(i).isTaken()) {
+                shipObject.addLife();
+                // We don't have a specific sound for bonus, but we could use something else or just silence
+            }
+
+            if (hasToBeDestroyed) {
+                myGdxGame.world.destroyBody(bonusArray.get(i).body);
+                bonusArray.remove(i--);
+            }
+        }
+    }
+
     private void restartGame() {
 
         for (int i = 0; i < trashArray.size(); i++) {
             myGdxGame.world.destroyBody(trashArray.get(i).body);
             trashArray.remove(i--);
+        }
+
+        for (int i = 0; i < bonusArray.size(); i++) {
+            myGdxGame.world.destroyBody(bonusArray.get(i).body);
+            bonusArray.remove(i--);
         }
 
         if (shipObject != null) {
