@@ -117,7 +117,9 @@ public class GameScreen extends ScreenAdapter {
                 TrashObject trashObject = new TrashObject(
                         GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
                         GameResources.TRASH_IMG_PATH,
-                        myGdxGame.world
+                        myGdxGame.world,
+                        gameSession.getCurrentTrashVelocity(),
+                        gameSession.getNewTrashLives()
                 );
                 trashArray.add(trashObject);
             }

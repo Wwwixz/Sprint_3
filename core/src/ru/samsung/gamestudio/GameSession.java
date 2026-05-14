@@ -84,7 +84,20 @@ public class GameSession {
         return false;
     }
 
+    public float getCurrentTrashVelocity() {
+        float timeInSeconds = (TimeUtils.millis() - sessionStartTime) / 1000f;
+        // Скорость растет от начальной до +100% за 5 минут
+        return GameSettings.TRASH_VELOCITY * (1 + Math.min(timeInSeconds / 300f, 1.0f));
+    }
+
+    public int getNewTrashLives() {
+        float timeInSeconds = (TimeUtils.millis() - sessionStartTime) / 1000f;
+        // После 1 минуты есть шанс 20%, после 3 минут - 50% появления крепкого мусора
+        float chance = Math.min(timeInSeconds / 360f, 0.5f);
+        return (new Random().nextFloat() < chance) ? 2 : 1;
+    }
+
     private float getTrashPeriodCoolDown() {
-        return (float) Math.exp(-0.001 * (TimeUtils.millis() - sessionStartTime + 1) / 1000);
+        return (float) Math.exp(-0.003 * (TimeUtils.millis() - sessionStartTime + 1) / 1000);
     }
 }

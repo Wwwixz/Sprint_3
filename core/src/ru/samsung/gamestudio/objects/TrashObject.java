@@ -1,5 +1,7 @@
 package ru.samsung.gamestudio.objects;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import ru.samsung.gamestudio.GameSettings;
@@ -12,7 +14,7 @@ public class TrashObject extends GameObject {
 
     private int livesLeft;
 
-    public TrashObject(int width, int height, String texturePath, World world) {
+    public TrashObject(int width, int height, String texturePath, World world, float velocity, int lives) {
         super(
                 texturePath,
                 width / 2 + paddingHorizontal + (new Random()).nextInt((GameSettings.SCREEN_WIDTH - 2 * paddingHorizontal - width)),
@@ -22,8 +24,19 @@ public class TrashObject extends GameObject {
                 world
         );
 
-        body.setLinearVelocity(new Vector2(0, -GameSettings.TRASH_VELOCITY));
-        livesLeft = 1;
+        body.setLinearVelocity(new Vector2(0, -velocity));
+        livesLeft = lives;
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        if (livesLeft > 1) {
+            batch.setColor(Color.ORANGE); // Крепкий мусор подсвечивается оранжевым
+        }
+        super.draw(batch);
+        if (livesLeft > 1) {
+            batch.setColor(Color.WHITE); // Возвращаем обычный цвет
+        }
     }
 
     public boolean isAlive() {
