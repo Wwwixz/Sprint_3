@@ -22,6 +22,7 @@ public class BonusObject extends GameObject {
         );
 
         body.setLinearVelocity(new Vector2(0, -GameSettings.TRASH_VELOCITY * 1.5f));
+        body.getFixtureList().first().setSensor(true);
     }
 
     public boolean isTaken() {
