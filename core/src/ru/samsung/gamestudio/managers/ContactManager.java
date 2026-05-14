@@ -24,12 +24,18 @@ public class ContactManager {
                 if (cDef == GameSettings.TRASH_BIT && cDef2 == GameSettings.BULLET_BIT
                         || cDef2 == GameSettings.TRASH_BIT && cDef == GameSettings.BULLET_BIT
                         || cDef == GameSettings.TRASH_BIT && cDef2 == GameSettings.SHIP_BIT
-                        || cDef2 == GameSettings.TRASH_BIT && cDef == GameSettings.SHIP_BIT
-                        || cDef == GameSettings.BONUS_BIT && cDef2 == GameSettings.SHIP_BIT
-                        || cDef2 == GameSettings.BONUS_BIT && cDef == GameSettings.SHIP_BIT) {
+                        || cDef2 == GameSettings.TRASH_BIT && cDef == GameSettings.SHIP_BIT) {
 
                     ((GameObject) fixA.getUserData()).hit();
                     ((GameObject) fixB.getUserData()).hit();
+
+                }
+
+                if (cDef == GameSettings.BONUS_BIT && cDef2 == GameSettings.SHIP_BIT
+                        || cDef2 == GameSettings.BONUS_BIT && cDef == GameSettings.SHIP_BIT) {
+
+                    if (cDef == GameSettings.BONUS_BIT) ((GameObject) fixA.getUserData()).hit();
+                    else ((GameObject) fixB.getUserData()).hit();
 
                 }
             }
