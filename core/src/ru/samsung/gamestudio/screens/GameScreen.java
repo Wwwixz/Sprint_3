@@ -307,6 +307,7 @@ public class GameScreen extends ScreenAdapter {
         );
 
         bulletArray.clear();
+        maxHealthMessageTimer = 0;
         gameSession.startGame();
     }
 
